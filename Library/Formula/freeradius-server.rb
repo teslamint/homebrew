@@ -11,6 +11,8 @@ class FreeradiusServer < Formula
     sha256 "d27bcb30a5d4ad39ab29b0faf2462163a2a177300817af8c324bab2c44593f65" => :mountain_lion
   end
 
+  head "https://github.com/freeradius/freeradius-server.git"
+
   depends_on "openssl"
   depends_on "talloc"
 
