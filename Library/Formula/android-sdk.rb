@@ -114,6 +114,9 @@ class AndroidSdk < Formula
     system "echo Y | android update sdk --no-ui --filter build-tools-#{build_tools_version}"
   end
 
-  # Ideas: make android a script that calls the actual android tool, but after
-  # that tool exits it repairs the directory locations?
+  test do
+    system "#{bin}/adb", "devices"
+    system "#{bin}/adb", "kill-server"
+    system "#{bin}/adb", "start-server"
+  end
 end
