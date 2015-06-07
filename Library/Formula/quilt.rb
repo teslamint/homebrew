@@ -15,11 +15,12 @@ class Quilt < Formula
 
   depends_on "gnu-sed"
   depends_on "coreutils"
+  depends_on 'gnu-getopt'
 
   def install
     system "./configure", "--prefix=#{prefix}",
                           "--with-sed=#{HOMEBREW_PREFIX}/bin/gsed",
-                          "--without-getopt"
+                          "--with-getopt=#{HOMEBREW_PREFIX}/opt/gnu-getopt/bin/getopt"
     system "make"
     system "make", "install", "emacsdir=#{share}/emacs/site-lisp/quilt"
   end
