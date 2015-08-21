@@ -101,18 +101,18 @@ class AndroidSdk < Formula
 
     The Android-SDK is available at #{opt_prefix}
 
+    You will have to install the platform-tools and docs EVERY time this formula
+    updates. If you want to try and fix this then see the comment in this formula.
+
     You may need to add the following to your .bashrc:
       export ANDROID_HOME=#{opt_prefix}
-
-      We agreed to the Android SDK license for you.
-      If this is unacceptable you should uninstall.
     EOS
   end
 
-  def post_install
-    system "echo Y | android update sdk --no-ui --filter platform-tools"
-    system "echo Y | android update sdk --no-ui --filter build-tools-#{build_tools_version}"
-  end
+  # The 'android' tool insists on deleting #{prefix}/platform-tools
+  # and then installing the new one. So it is impossible for us to redirect
+  # the SDK location to var so that the platform-tools don't have to be
+  # freshly installed EVERY DANG time the base SDK updates.
 
   test do
     system "#{bin}/adb", "devices"
