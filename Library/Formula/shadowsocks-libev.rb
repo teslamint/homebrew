@@ -1,15 +1,15 @@
 class ShadowsocksLibev < Formula
   desc "Libev port of shadowsocks"
   homepage "https://github.com/shadowsocks/shadowsocks-libev"
-  url "https://github.com/shadowsocks/shadowsocks-libev/archive/v2.3.2.tar.gz"
-  sha256 "789b42e45efce85bdc983574282cab0092f32443630d7fedda667cfbf85e5b40"
+  url "https://github.com/shadowsocks/shadowsocks-libev/archive/v2.4.4.tar.gz"
+  sha256 "c134b012e258218bd0c48e2661746ab9196428d16883e972554aacb8542d2683"
   head "https://github.com/shadowsocks/shadowsocks-libev.git"
 
   bottle do
     cellar :any
-    sha256 "3adefa985247603c32b2deb7b23055717aa467c7d123cadeda940876d9c8eab8" => :yosemite
-    sha256 "e4471fb4bafbd8db32b4a2f344e1d1f6ae1b27a17dc4261f72f142b881ae5942" => :mavericks
-    sha256 "787cd61add6520f45242cef060903bc3a53b25279181b753da32592f79e27688" => :mountain_lion
+    sha256 "889a2fe3ad6d38488d530945f56fa2251e6835897accc7d247c3680adf635b60" => :el_capitan
+    sha256 "238726be00957112e1de5c875808f46f78f344cf5f7d89300c0301ea74dc3ac9" => :yosemite
+    sha256 "dc30620a8f40a19b3e36a869c3d874d81ecf9886b682c06121bf21c162190400" => :mavericks
   end
 
   depends_on "openssl"
@@ -40,6 +40,31 @@ class ShadowsocksLibev < Formula
     man1.install Dir["man/*.1"]
   end
 
+  test do
+    (testpath/"shadowsocks-libev.json").write <<-EOS.undent
+      {
+          "server":"127.0.0.1",
+          "server_port":9998,
+          "local":"127.0.0.1",
+          "local_port":9999,
+          "password":"test",
+          "timeout":600,
+          "method":"table"
+      }
+    EOS
+    server = fork { exec bin/"ss-server", "-c", testpath/"shadowsocks-libev.json" }
+    client = fork { exec bin/"ss-local", "-c", testpath/"shadowsocks-libev.json" }
+    sleep 3
+    begin
+      system "curl", "--socks5", "127.0.0.1:9999", "github.com"
+    ensure
+      Process.kill 9, server
+      Process.wait server
+      Process.kill 9, client
+      Process.wait client
+    end
+  end
+
   plist_options :manual => "#{HOMEBREW_PREFIX}/opt/shadowsocks-libev/bin/ss-local -c #{HOMEBREW_PREFIX}/etc/shadowsocks-libev.json"
 
   def plist; <<-EOS.undent
@@ -58,10 +83,7 @@ class ShadowsocksLibev < Formula
         <key>RunAtLoad</key>
         <true/>
         <key>KeepAlive</key>
-        <dict>
-          <key>SuccessfulExit</key>
-          <false/>
-        </dict>
+        <true/>
       </dict>
     </plist>
     EOS

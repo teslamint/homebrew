@@ -1,20 +1,21 @@
 class JbossForge < Formula
   desc "Tools to help set up and configure a project"
   homepage "http://forge.jboss.org/"
-  url "https://downloads.jboss.org/forge/releases/2.19.1.Final/forge-distribution-2.19.1.Final-offline.zip"
-  version "2.19.1.Final"
-  sha256 "3047e54edd929262e80c31aeb8adc9f835395a102109a3653d690111c522c421"
+  url "https://downloads.jboss.org/forge/releases/2.20.1.Final/forge-distribution-2.20.1.Final-offline.zip"
+  version "2.20.1.Final"
+  sha256 "dbe51b8c9cd0cf1b0a9adadcd8161c442a4ab586ca63f3a3f6d3369a2831afae"
 
-  bottle do
-    cellar :any_skip_relocation
-    sha256 "ddf3d51ad0c59f4d627fa889b21d0044ebe93b09c605cde25cdf0d9ab282a99c" => :el_capitan
-    sha256 "c33be3fc0799f9d1fee87301031ccb7808186965b9ce4a6b0429e78cb2b50349" => :yosemite
-    sha256 "e1fee1c35f6d3846368397625f662bf76aa27d6cd1777aae4f55f820d35caf48" => :mavericks
+  bottle :unneeded
+
+  devel do
+    url "https://downloads.jboss.org/forge/releases/3.0.0.Alpha3/forge-distribution-3.0.0.Alpha3-offline.zip"
+    version "3.0.0.Alpha3"
+    sha256 "d234c9183accb7087a7ecffaa2de5c0b82834223ffdebe5485f3f548486bb62a"
   end
 
   def install
     rm_f Dir["bin/*.bat"]
-    libexec.install %w[addons bin img lib logging.properties]
+    libexec.install %w[addons bin lib logging.properties]
     bin.install_symlink libexec/"bin/forge"
   end
 

@@ -1,25 +1,21 @@
 class Jenkins < Formula
   desc "Extendable open source continuous integration server"
   homepage "https://jenkins-ci.org"
-  url "http://mirrors.jenkins-ci.org/war/1.629/jenkins.war"
-  sha256 "b74b1cd5b8873f0605106893e063dd2407afdcd1fd516e7034314385ac67605c"
-
-  bottle do
-    cellar :any_skip_relocation
-    sha256 "3744a40461523f05f31ab332a4c507d3daff0cd53fe3426333bae7595a604e8e" => :el_capitan
-    sha256 "c4367699fd865740124c4b1524a3e2412fad0e15d31c683eb3ac048b4b404367" => :yosemite
-    sha256 "e7e54443f9767bef1b6deca5cc2288dae3e5c5b7571f23a9313143b6336e1151" => :mavericks
-  end
+  url "http://mirrors.jenkins-ci.org/war/1.644/jenkins.war"
+  sha256 "f4fe9c1faa682cbfa8dc6e7f3e64d78897dcb7332e8f513f12a3b845e3922eb0"
 
   head do
     url "https://github.com/jenkinsci/jenkins.git"
     depends_on "maven" => :build
   end
 
-  depends_on :java => "1.6+"
+  bottle :unneeded
+
+  depends_on :java => "1.7+"
 
   def install
     if build.head?
+      ENV.java_cache
       system "mvn", "clean", "install", "-pl", "war", "-am", "-DskipTests"
     else
       system "jar", "xvf", "jenkins.war"

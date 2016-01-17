@@ -3,15 +3,14 @@
 class V8 < Formula
   desc "Google's JavaScript engine"
   homepage "https://code.google.com/p/v8/"
-  url "https://github.com/v8/v8-git-mirror/archive/4.5.103.29.tar.gz"
-  sha256 "5ebcab22d168f59a91319b7e99859f36b8affc3872bf33ad7a1f400750b83040"
+  url "https://github.com/v8/v8-git-mirror/archive/4.7.80.31.tar.gz"
+  sha256 "de89c9c51b5063f174bf6f6ae32ab53206a633056dd082f7bb9843db98b5de45"
 
   bottle do
     cellar :any
-    revision 1
-    sha256 "090670e68b1a9dc542d826b2fe9a1d8b4a7ab9f3f52ecd72f0305e5e6eb28f60" => :yosemite
-    sha256 "4e0c6b2a7bb20374b79a25f374e0f1ab419b2ffbe85e7ad79b493822b59e7041" => :mavericks
-    sha256 "caea11e4fb474d68642a966008fb2e6079ead9988b1d8baba3763ec0349e8318" => :mountain_lion
+    sha256 "2b45ff1e2afccc61cd02669fd87ed6e9f1a8a38b1970e17ac8360c269f59e215" => :el_capitan
+    sha256 "05b48079fbb41a44ed69114bf74939852576931c60f380618a2877bd0cbfb2f3" => :yosemite
+    sha256 "b058fdee91f7458ea1feff9c92370b9f8056fb4cfd1eb792789004e24302271e" => :mavericks
   end
 
   option "with-readline", "Use readline instead of libedit"
@@ -28,38 +27,45 @@ class V8 < Formula
   # Update from "DEPS" file in tarball.
   resource "gyp" do
     url "https://chromium.googlesource.com/external/gyp.git",
-        :revision => "5122240c5e5c4d8da12c543d82b03d6089eb77c5"
+        :revision => "01528c7244837168a1c80f06ff60fa5a9793c824"
   end
 
   resource "icu" do
     url "https://chromium.googlesource.com/chromium/deps/icu.git",
-        :revision => "c81a1a3989c3b66fa323e9a6ee7418d7c08297af"
+        :revision => "423fc7e1107fb08ccf007c4aeb76dcab8b2747c1"
   end
 
   resource "buildtools" do
     url "https://chromium.googlesource.com/chromium/buildtools.git",
-        :revision => "ecc8e253abac3b6186a97573871a084f4c0ca3ae"
+        :revision => "e7111440c07a883b82ffbbe6d26c744dfc6c9673"
+  end
+
+  resource "swarming_client" do
+    url "https://chromium.googlesource.com/external/swarming.client.git",
+        :revision => "6e5d2b21f0ac98396cd736097a985346feed1328"
   end
 
   resource "clang" do
     url "https://chromium.googlesource.com/chromium/src/tools/clang.git",
-        :revision => "73ec8804ed395b0886d6edf82a9f33583f4a7902"
+        :revision => "0150e39a3112dbc7e4c7a3ab25276b8d7781f3b6"
   end
 
   resource "gmock" do
     url "https://chromium.googlesource.com/external/googlemock.git",
-        :revision => "29763965ab52f24565299976b936d1265cb6a271"
+        :revision => "0421b6f358139f02e102c9c332ce19a33faf75be"
   end
 
   resource "gtest" do
     url "https://chromium.googlesource.com/external/googletest.git",
-        :revision => "23574bf2333f834ff665f894c97bef8a5b33a0a9"
+        :revision => "9855a87157778d39b95eccfb201a9dc90f6d61c6"
   end
 
   def install
     # Bully GYP into correctly linking with c++11
     ENV.cxx11
     ENV["GYP_DEFINES"] = "clang=1 mac_deployment_target=#{MacOS.version}"
+    # https://code.google.com/p/v8/issues/detail?id=4511#c3
+    ENV.append "GYP_DEFINES", "v8_use_external_startup_data=0"
 
     # fix up libv8.dylib install_name
     # https://github.com/Homebrew/homebrew/issues/36571
@@ -74,6 +80,7 @@ class V8 < Formula
     (buildpath/"testing/gmock").install resource("gmock")
     (buildpath/"testing/gtest").install resource("gtest")
     (buildpath/"tools/clang").install resource("clang")
+    (buildpath/"tools/swarming_client").install resource("swarming_client")
 
     system "make", "native", "library=shared", "snapshot=on",
                    "console=readline", "i18nsupport=off",

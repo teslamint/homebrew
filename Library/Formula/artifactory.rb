@@ -1,12 +1,14 @@
 class Artifactory < Formula
   desc "Manages binaries"
-  homepage "http://www.jfrog.com/artifactory/"
-  url "https://dl.bintray.com/jfrog/artifactory/jfrog-artifactory-oss-4.0.2.zip"
-  sha256 "52a882b3681bc00eb73fddfe6abdc739156c2940be073406185be23a5f35bff2"
+  homepage "https://www.jfrog.com/artifactory/"
+  url "https://dl.bintray.com/jfrog/artifactory/jfrog-artifactory-oss-4.4.1.zip"
+  sha256 "2e96267336c6e62eccd27f31ee83dc2d4f60a845e3a866a1da42a7b5176b5217"
 
-  depends_on :java => "1.8+"
+  bottle :unneeded
 
   option "with-low-heap", "Run artifactory with low Java memory options. Useful for development machines. Do not use in production."
+
+  depends_on :java => "1.8+"
 
   def install
     # Remove Windows binaries
